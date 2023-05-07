@@ -19,11 +19,11 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
     ];
 
     return (
-        <div className="grid grid-cols-8 grid-rows-[8] border border-gray-400 relative">
+        <div className="grid grid-cols-8 grid-rows-[8] relative">
             {Array.from({ length: 64 }).map((_) => (
                 <span
                     style={{ width: `${cellSize}px`, height: `${cellSize}px` }}
-                    className="border border-gray-400 aspect-square"
+                    className="border border-primary-900 aspect-square bg-primary-600"
                 ></span>
             ))}
 
