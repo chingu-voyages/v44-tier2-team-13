@@ -19,7 +19,10 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
     ];
 
     return (
-        <div className="grid grid-cols-8 grid-rows-[8] relative">
+        <div
+            style={{ minWidth: cellSize * 8 }}
+            className="grid grid-cols-8 grid-rows-[8] relative"
+        >
             {Array.from({ length: 64 }).map((_) => (
                 <span
                     style={{ width: `${cellSize}px`, height: `${cellSize}px` }}

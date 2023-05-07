@@ -12,17 +12,17 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
     return (
         <div
             style={{
-                backgroundColor: color || "#ff0000",
+                backgroundColor: color,
                 top: pos.y,
                 left: pos.x,
                 width: `${cellSize}px`,
                 height: `${cellSize}px`,
             }}
-            className="absolute top-0 left-0 flex flex-col gap-0 items-center justify-center aspect-square"
+            className="absolute top-0 left-0 flex flex-col gap-0 items-center justify-center aspect-square bg-green-300 rounded leading-none"
         >
-            <span>{name}</span>
-            <span>{boolValue}</span>
-            <span>{operation}</span>
+            <span className="text-lg">{name}</span>
+            <span className="text-sm">{boolValue}</span>
+            <span className="text-sm">{operation}</span>
         </div>
     );
 };
