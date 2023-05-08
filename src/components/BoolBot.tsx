@@ -36,7 +36,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
     };
 
     const updateVelocity = () => {
-        // @TODO: prevent bots from moving in circles
+        // TODO: prevent bots from moving in circles
         if (x >= GRIDWIDTH - 1 && vx > 0) {
             setVx(0);
             setVy(randomOneOrMinusOne());
