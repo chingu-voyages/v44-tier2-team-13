@@ -1,6 +1,68 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import { Bot, Operation, Vector } from "../lib/types";
+import { Bot, Operation } from "../lib/types";
+
+const defaultBots: Bot[] = [
+    {
+        name: "A",
+        boolValue: 0,
+        // operation: Operation.AND,
+        pos: { x: 3, y: 7 },
+        speed: 2,
+        dead: false,
+        direction: { x: 0, y: -1 }, // up
+        color: "blue",
+    },
+    {
+        name: "B",
+        boolValue: 1,
+        // operation: Operation.NOR,
+        pos: { x: 0, y: 2 },
+        speed: 4,
+        dead: false,
+        direction: { x: 0, y: 1 }, // down
+        color: "green",
+    },
+    {
+        name: "C",
+        boolValue: 0,
+        // operation: Operation.NOR,
+        pos: { x: 3, y: 2 },
+        speed: 1,
+        dead: false,
+        direction: { x: 1, y: 0 }, // right
+        color: "red",
+    },
+    {
+        name: "D",
+        boolValue: 1,
+        // operation: Operation.NOR,
+        pos: { x: 3, y: 2 },
+        speed: 3,
+        dead: false,
+        direction: { x: 1, y: 0 }, // right
+        color: "yellow",
+    },
+    {
+        name: "E",
+        boolValue: 1,
+        // operation: Operation.NOR,
+        pos: { x: 3, y: 2 },
+        speed: 2,
+        dead: false,
+        direction: { x: 1, y: 0 }, // right
+        color: "pink",
+    },
+    {
+        name: "F",
+        boolValue: 0,
+        // operation: Operation.NOR,
+        pos: { x: 3, y: 2 },
+        speed: 5,
+        dead: false,
+        direction: { x: 1, y: 0 }, // right
+        color: "purple",
+    },
+];
 
 const randomOneOrMinusOne = () => {
     if (Math.random() > 0.5) {
@@ -11,65 +73,40 @@ const randomOneOrMinusOne = () => {
 };
 
 interface BotsState {
+    operation: Operation;
     bots: Bot[];
     createNew: (bot: Bot) => void;
-    // setPosition: (botName: string, newPos: Vector) => void;
+    kill: (botName: string) => void;
     update: (botName: string) => void;
     start: () => number[];
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
-    bots: [
-        {
-            name: "A",
-            boolValue: 0,
-            operation: Operation.AND,
-            pos: { x: 3, y: 7 },
-            speed: 2,
-            direction: { x: 0, y: -1 }, // up
-            color: "blue",
-        },
-        {
-            name: "B",
-            boolValue: 1,
-            operation: Operation.OR,
-            pos: { x: 0, y: 2 },
-            speed: 4,
-            direction: { x: 0, y: 1 }, // down
-            color: "green",
-        },
-        {
-            name: "C",
-            boolValue: 0,
-            operation: Operation.NOT,
-            pos: { x: 3, y: 2 },
-            speed: 1,
-            direction: { x: 1, y: 0 }, // right
-            color: "red",
-        },
-    ],
+    operation: Operation.OR,
+    bots: defaultBots,
 
     createNew: (bot) =>
         set((state) => {
             return { bots: [...state.bots, bot] };
         }),
 
-    // setPosition: (botName, newPos) =>
-    //     set((state) => {
-    //         const bots = [...state.bots];
-    //         bots.forEach((bot) => {
-    //             if (bot.name === botName) {
-    //                 bot.pos = newPos;
-    //                 return;
-    //             }
-    //         });
-    //         return { bots };
-    //     }),
+    kill: (botName) =>
+        set((state) => {
+            const bots = [...state.bots];
+            bots.forEach((bot) => {
+                if (bot.name === botName) {
+                    bot.dead = true;
+                }
+            });
+            return { bots: bots };
+        }),
 
     update: (botName) =>
         set((state) => {
             const bots = [...state.bots];
             bots.forEach((bot) => {
+                if (bot.dead) return;
+                // Move first
                 if (botName !== bot.name) return;
                 // TODO: Prevent bots from spinning in circles on the border
                 bot.pos.x += bot.direction.x;
@@ -93,6 +130,54 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                     bot.direction.x = randomOneOrMinusOne();
                     bot.pos.y = 0;
                 }
+
+                // Check for collisions
+                bots.forEach((obot) => {
+                    if (bot === obot) return;
+                    if (obot.dead) return;
+                    // checking if the updated position overlaps with an already existing bot
+                    if (bot.pos.x === obot.pos.x && bot.pos.y === obot.pos.y) {
+                        // console.log("COLLISION");
+                        // Check WIN or LOSE
+                        const determiningBot =
+                            bot.speed > obot.speed ? bot : obot; // bot with greater speed will be the winning bot in case of 1
+                        const nonDeterminingBot =
+                            bot.speed < obot.speed ? bot : obot; // bot with greater speed will be the winning bot in case of 1
+                        let result: 0 | 1;
+                        switch (state.operation) {
+                            case Operation.AND:
+                                result = bot.boolValue && obot.boolValue;
+                                break;
+                            case Operation.OR:
+                                result = bot.boolValue || obot.boolValue;
+                                break;
+                            case Operation.NOR:
+                                result = !(bot.boolValue || obot.boolValue)
+                                    ? 1
+                                    : 0;
+                                break;
+                            case Operation.XOR:
+                                // Copied off of the internet
+                                result =
+                                    (bot.boolValue || obot.boolValue) &&
+                                    !(bot.boolValue && obot.boolValue)
+                                        ? 1
+                                        : 0;
+                                break;
+                        }
+
+                        // Removing the loser
+                        if (result === 1) {
+                            console.log(
+                                determiningBot.name,
+                                determiningBot.color
+                            );
+                            get().kill(nonDeterminingBot.name);
+                        } else {
+                            console.log("DRAW");
+                        }
+                    }
+                });
             });
             return { bots };
         }),

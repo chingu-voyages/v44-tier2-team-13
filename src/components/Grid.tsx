@@ -10,7 +10,6 @@ interface GridProps {
 const Grid: FC<GridProps> = ({ cellSize }) => {
     const bots: Bot[] = useBotsStore((state) => state.bots);
     const start = useBotsStore((state) => state.start);
-
     useEffect(() => {
         const intervalIds = start();
 
@@ -22,29 +21,32 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
     }, []);
 
     return (
-        <div
-            style={{ minWidth: cellSize * 8 }}
-            className="grid grid-cols-8 grid-rows-[8] relative"
-        >
-            {Array.from({ length: 8 }).map((_, i) =>
-                Array.from({ length: 8 }).map((_, j) => (
-                    <span
-                        key={`${j}, ${i}`}
-                        style={{
-                            width: `${cellSize}px`,
-                            height: `${cellSize}px`,
-                        }}
-                        className="border border-primary-900 aspect-square bg-primary-600 leading-none"
-                    >
-                        {j}, {i}
-                    </span>
-                ))
-            )}
+        <>
+            <div
+                style={{ minWidth: cellSize * 8 }}
+                className="grid grid-cols-8 grid-rows-[8] relative"
+            >
+                {Array.from({ length: 8 }).map((_, i) =>
+                    Array.from({ length: 8 }).map((_, j) => (
+                        <span
+                            key={`${j}, ${i}`}
+                            style={{
+                                width: `${cellSize}px`,
+                                height: `${cellSize}px`,
+                            }}
+                            className="border border-primary-900 aspect-square bg-primary-600 leading-none"
+                        >
+                            {j}, {i}
+                        </span>
+                    ))
+                )}
 
-            {bots.map((bot) => (
-                <BoolBot key={bot.name} bot={bot} cellSize={cellSize} />
-            ))}
-        </div>
+                {bots.map((bot) => (
+                    <BoolBot key={bot.name} bot={bot} cellSize={cellSize} />
+                ))}
+            </div>
+            <span className="text-white">{bots.length}</span>
+        </>
     );
 };
 
