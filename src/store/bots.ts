@@ -63,6 +63,8 @@ export const useBotsStore = create<BotsState>()((set) => ({
             const bots = [...state.bots];
             bots.forEach((bot) => {
                 if (botName !== bot.name) return;
+                // TODO: Use a velocity vector instead of switching direction
+                // TODO: Prevent bots from spinning in circles on the border
                 switch (bot.direction) {
                     case "up":
                         if (bot.pos.y <= 0) {

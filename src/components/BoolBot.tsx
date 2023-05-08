@@ -16,11 +16,9 @@ const randomOneOrMinusOne = () => {
 
 const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
     const { color, pos, name, boolValue, operation, direction, speed } = bot;
-    const GRIDWIDTH = 8;
-    const GRIDHEIGHT = 8;
     const TIMESTEP = 1000 / speed;
 
-    console.log("RE RENDER");
+    // console.log("RE RENDER");
 
     return (
         <div
