@@ -1,41 +1,25 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Bot, Operation } from "../lib/types";
 import BoolBot from "./BoolBot";
+import { useBotsStore } from "../store/bots";
 
 interface GridProps {
     cellSize: number;
 }
 
 const Grid: FC<GridProps> = ({ cellSize }) => {
-    const bots: Bot[] = [
-        {
-            name: "A",
-            boolValue: 0,
-            operation: Operation.AND,
-            pos: { x: 3, y: 7 },
-            speed: 2,
-            startDirection: "up",
-            color: "blue",
-        },
-        {
-            name: "B",
-            boolValue: 1,
-            operation: Operation.OR,
-            pos: { x: 0, y: 2 },
-            speed: 4,
-            startDirection: "down",
-            color: "green",
-        },
-        {
-            name: "C",
-            boolValue: 0,
-            operation: Operation.NOT,
-            pos: { x: 3, y: 2 },
-            speed: 1,
-            startDirection: "right",
-            color: "red",
-        },
-    ];
+    const bots: Bot[] = useBotsStore((state) => state.bots);
+    const start = useBotsStore((state) => state.start);
+
+    useEffect(() => {
+        const intervalIds = start();
+
+        return () => {
+            intervalIds.forEach((id) => {
+                clearInterval(id);
+            });
+        };
+    }, []);
 
     return (
         <div
@@ -53,12 +37,7 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
             ))}
 
             {bots.map((bot) => (
-                <BoolBot
-                    allBots={bots}
-                    key={bot.name}
-                    bot={bot}
-                    cellSize={cellSize}
-                />
+                <BoolBot key={bot.name} bot={bot} cellSize={cellSize} />
             ))}
         </div>
     );
