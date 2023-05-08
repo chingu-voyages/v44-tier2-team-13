@@ -15,6 +15,7 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
             pos: { x: 3, y: 7 },
             speed: 2,
             startDirection: "up",
+            color: "blue",
         },
         {
             name: "B",
@@ -23,15 +24,17 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
             pos: { x: 0, y: 2 },
             speed: 4,
             startDirection: "down",
+            color: "green",
         },
-        // {
-        //     name: "C",
-        //     boolValue: 0,
-        //     operation: Operation.NOT,
-        //     pos: { x: 3, y: 2 },
-        //     speed: 1,
-        //     startDirection: "right",
-        // },
+        {
+            name: "C",
+            boolValue: 0,
+            operation: Operation.NOT,
+            pos: { x: 3, y: 2 },
+            speed: 1,
+            startDirection: "right",
+            color: "red",
+        },
     ];
 
     return (
