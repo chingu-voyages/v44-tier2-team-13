@@ -6,19 +6,9 @@ interface BoolBotProps {
     cellSize: number;
 }
 
-const randomOneOrMinusOne = () => {
-    if (Math.random() > 0.5) {
-        return -1;
-    } else {
-        return 1;
-    }
-};
-
 const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
     const { color, pos, name, boolValue, operation, direction, speed } = bot;
     const TIMESTEP = 1000 / speed;
-
-    // console.log("RE RENDER", name, color);
 
     return (
         <div
@@ -36,10 +26,12 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
             className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900"
         >
             <div className="flex flex-col gap-0 items-center justify-center leading-none">
-                <span className="text-lg">{name}</span>
+                {/* <span className="text-lg">{name}</span>
                 <span className="text-sm">{boolValue}</span>
-                <span className="text-sm">{operation}</span>
-                <span>{direction}</span>
+                <span className="text-sm">{operation}</span> */}
+                <span>
+                    {pos.x}, {pos.y}
+                </span>
             </div>
         </div>
     );

@@ -29,14 +29,14 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
             {Array.from({ length: 8 }).map((_, i) =>
                 Array.from({ length: 8 }).map((_, j) => (
                     <span
-                        key={`${i}, ${j}`}
+                        key={`${j}, ${i}`}
                         style={{
                             width: `${cellSize}px`,
                             height: `${cellSize}px`,
                         }}
                         className="border border-primary-900 aspect-square bg-primary-600 leading-none"
                     >
-                        {i}, {j}
+                        {j}, {i}
                     </span>
                 ))
             )}

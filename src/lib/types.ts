@@ -14,7 +14,7 @@ export interface Bot {
     name: string;
     boolValue: 0 | 1;
     operation: Operation;
-    direction: "up" | "right" | "down" | "left";
+    direction: Vector;
     speed: number;
     pos: Vector;
     color?: string;
