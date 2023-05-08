@@ -13,7 +13,9 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
     const stop = useBotsStore((state) => state.stop);
     const running = useBotsStore((state) => state.running);
     useEffect(() => {
-        start();
+        // start();
+
+        // Necessary to clear the timeouts
         return () => {
             stop();
         };

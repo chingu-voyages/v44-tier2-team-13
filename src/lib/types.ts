@@ -13,7 +13,6 @@ export interface Vector {
 export interface Bot {
     name: string;
     boolValue: 0 | 1;
-    // operation: Operation;
     dead: boolean;
     direction: Vector;
     speed: number;

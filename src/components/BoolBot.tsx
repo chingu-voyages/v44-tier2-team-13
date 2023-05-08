@@ -20,18 +20,20 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 left: pos.x * cellSize,
                 width: `${cellSize}px`,
                 height: `${cellSize}px`,
-                transition: `top ${TIMESTEP / 2}ms linear, left ${
-                    TIMESTEP / 2
-                }ms linear, opacity 100ms linear`,
-                opacity: dead ? 0.1 : 1,
+                // transition: `top ${TIMESTEP / 2}ms linear, left ${
+                //     TIMESTEP / 2
+                // }ms linear, opacity 100ms linear, transform`,
+                // opacity: dead ? 0 : 1,
+                // scale: dead ? 0.5 : 1,
+                transform: `scale(${dead ? 0 : 1})`,
                 borderRadius: boolValue === 0 ? "100%" : 0,
             }}
-            className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900"
+            className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900 transition-all"
         >
             <div
                 className="flex flex-col gap-0 items-center justify-center leading-none"
                 onClick={() => {
-                    console.log("WHY DELAY");
+                    // console.log("WHY DELAY");
                     kill(name);
                 }}
             >

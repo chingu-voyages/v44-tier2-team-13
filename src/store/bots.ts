@@ -137,12 +137,13 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
                     // checking if the updated position overlaps with an already existing bot
                     if (bot.pos.x === obot.pos.x && bot.pos.y === obot.pos.y) {
-                        // console.log("COLLISION");
+                        // --- Collision ---
                         // Check WIN or LOSE
                         const determiningBot =
                             bot.speed > obot.speed ? bot : obot; // bot with greater speed will be the winning bot in case of 1
                         const nonDeterminingBot =
-                            bot.speed < obot.speed ? bot : obot; // bot with greater speed will be the winning bot in case of 1
+                            bot.speed < obot.speed ? bot : obot; // bot with lesser speed will be the losing bot in case of 1
+
                         let result: 0 | 1;
                         switch (state.operation) {
                             case Operation.AND:
@@ -173,6 +174,8 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                                 determiningBot.color
                             );
                             get().kill(nonDeterminingBot.name);
+                            determiningBot.pos.x -= determiningBot.direction.x;
+                            determiningBot.pos.y -= determiningBot.direction.y;
                         } else {
                             console.log("TIE");
                         }
