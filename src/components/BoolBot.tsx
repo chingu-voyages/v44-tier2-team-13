@@ -3,6 +3,7 @@ import { Bot } from "../lib/types";
 
 interface BoolBotProps {
     bot: Bot;
+    allBots: Bot[];
     cellSize: number;
 }
 
@@ -14,7 +15,7 @@ const randomOneOrMinusOne = () => {
     }
 };
 
-const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
+const BoolBot: FC<BoolBotProps> = ({ bot, allBots, cellSize }) => {
     const { color, pos, name, boolValue, operation, startDirection, speed } =
         bot;
     const GRIDWIDTH = 8;
@@ -30,7 +31,15 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
         startDirection === "down" ? 1 : startDirection === "up" ? -1 : 0
     );
 
+    const checkCollision = () => {
+        const otherBots = allBots.filter((bot) => bot.name !== name);
+        otherBots.forEach((obot, i) => {
+            console.log(obot.pos, obot.name);
+        });
+    };
+
     const updatePosition = () => {
+        checkCollision();
         setX((x) => x + vx);
         setY((y) => y + vy);
     };
@@ -73,11 +82,12 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 left: x * cellSize,
                 width: `${cellSize}px`,
                 height: `${cellSize}px`,
-                transition: `top ${TIMESTEP / 2}ms linear, left ${
-                    TIMESTEP / 2
-                }ms linear`,
+                // transition: `top ${TIMESTEP / 2}ms linear, left ${
+                //     TIMESTEP / 2
+                // }ms linear`,
+                borderRadius: boolValue === 0 ? "100%" : 0,
             }}
-            className="absolute top-0 left-0 flex flex-col gap-0 items-center justify-center aspect-square bg-green-300 rounded leading-none"
+            className="absolute top-0 left-0 flex flex-col gap-0 items-center justify-center aspect-square bg-green-300 leading-none border border-primary-900"
         >
             <span className="text-lg">{name}</span>
             <span className="text-sm">{boolValue}</span>

@@ -24,14 +24,14 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
             speed: 4,
             startDirection: "down",
         },
-        {
-            name: "C",
-            boolValue: 0,
-            operation: Operation.NOT,
-            pos: { x: 3, y: 2 },
-            speed: 1,
-            startDirection: "right",
-        },
+        // {
+        //     name: "C",
+        //     boolValue: 0,
+        //     operation: Operation.NOT,
+        //     pos: { x: 3, y: 2 },
+        //     speed: 1,
+        //     startDirection: "right",
+        // },
     ];
 
     return (
@@ -50,7 +50,12 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
             ))}
 
             {bots.map((bot) => (
-                <BoolBot key={bot.name} bot={bot} cellSize={cellSize} />
+                <BoolBot
+                    allBots={bots}
+                    key={bot.name}
+                    bot={bot}
+                    cellSize={cellSize}
+                />
             ))}
         </div>
     );
