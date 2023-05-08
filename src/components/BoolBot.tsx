@@ -18,7 +18,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
     const { color, pos, name, boolValue, operation, direction, speed } = bot;
     const TIMESTEP = 1000 / speed;
 
-    // console.log("RE RENDER");
+    // console.log("RE RENDER", name, color);
 
     return (
         <div
