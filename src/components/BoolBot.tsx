@@ -10,7 +10,7 @@ interface BoolBotProps {
 const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
     const { color, pos, name, boolValue, direction, dead, speed } = bot;
     const TIMESTEP = 1000 / speed;
-    const remove = useBotsStore((state) => state.kill);
+    const kill = useBotsStore((state) => state.kill);
 
     return (
         <div
@@ -32,8 +32,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 className="flex flex-col gap-0 items-center justify-center leading-none"
                 onClick={() => {
                     console.log("WHY DELAY");
-
-                    remove(name);
+                    kill(name);
                 }}
             >
                 <span className="text-lg">{name}</span>

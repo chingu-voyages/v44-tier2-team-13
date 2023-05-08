@@ -5,7 +5,6 @@ const defaultBots: Bot[] = [
     {
         name: "A",
         boolValue: 0,
-        // operation: Operation.AND,
         pos: { x: 3, y: 7 },
         speed: 2,
         dead: false,
@@ -15,7 +14,6 @@ const defaultBots: Bot[] = [
     {
         name: "B",
         boolValue: 1,
-        // operation: Operation.NOR,
         pos: { x: 0, y: 2 },
         speed: 4,
         dead: false,
@@ -25,7 +23,6 @@ const defaultBots: Bot[] = [
     {
         name: "C",
         boolValue: 0,
-        // operation: Operation.NOR,
         pos: { x: 3, y: 2 },
         speed: 1,
         dead: false,
@@ -35,8 +32,7 @@ const defaultBots: Bot[] = [
     {
         name: "D",
         boolValue: 1,
-        // operation: Operation.NOR,
-        pos: { x: 3, y: 2 },
+        pos: { x: 4, y: 6 },
         speed: 3,
         dead: false,
         direction: { x: 1, y: 0 }, // right
@@ -45,8 +41,7 @@ const defaultBots: Bot[] = [
     {
         name: "E",
         boolValue: 1,
-        // operation: Operation.NOR,
-        pos: { x: 3, y: 2 },
+        pos: { x: 5, y: 5 },
         speed: 2,
         dead: false,
         direction: { x: 1, y: 0 }, // right
@@ -55,8 +50,7 @@ const defaultBots: Bot[] = [
     {
         name: "F",
         boolValue: 0,
-        // operation: Operation.NOR,
-        pos: { x: 3, y: 2 },
+        pos: { x: 3, y: 0 },
         speed: 5,
         dead: false,
         direction: { x: 1, y: 0 }, // right
@@ -75,15 +69,20 @@ const randomOneOrMinusOne = () => {
 interface BotsState {
     operation: Operation;
     bots: Bot[];
+    intervalIds: number[];
+    running: boolean;
     createNew: (bot: Bot) => void;
     kill: (botName: string) => void;
     update: (botName: string) => void;
-    start: () => number[];
+    start: () => void;
+    stop: () => void;
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.OR,
     bots: defaultBots,
+    running: false,
+    intervalIds: [],
 
     createNew: (bot) =>
         set((state) => {
@@ -133,8 +132,9 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
                 // Check for collisions
                 bots.forEach((obot) => {
-                    if (bot === obot) return;
+                    if (bot === obot) return; // avoid self collision
                     if (obot.dead) return;
+
                     // checking if the updated position overlaps with an already existing bot
                     if (bot.pos.x === obot.pos.x && bot.pos.y === obot.pos.y) {
                         // console.log("COLLISION");
@@ -174,7 +174,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                             );
                             get().kill(nonDeterminingBot.name);
                         } else {
-                            console.log("DRAW");
+                            console.log("TIE");
                         }
                     }
                 });
@@ -182,17 +182,25 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             return { bots };
         }),
 
-    start: () => {
-        const intervalIds: number[] = [];
-        const state = get();
-        const bots = [...state.bots];
-        bots.forEach((bot) => {
-            const id = setInterval(
-                () => state.update(bot.name),
-                1000 / bot.speed
-            );
-            intervalIds.push(id);
-        });
-        return intervalIds;
-    },
+    start: () =>
+        set((state) => {
+            const intervalIds: number[] = [];
+            const bots = [...state.bots];
+            bots.forEach((bot) => {
+                const id = setInterval(
+                    () => state.update(bot.name),
+                    1000 / bot.speed
+                );
+                intervalIds.push(id);
+            });
+            return { intervalIds, running: true };
+        }),
+
+    stop: () =>
+        set((state) => {
+            state.intervalIds.forEach((id) => {
+                clearInterval(id);
+            });
+            return { intervalIds: [], running: false };
+        }),
 }));
