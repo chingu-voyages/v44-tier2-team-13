@@ -58,6 +58,10 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                     >
                         {running ? "PAUSE" : "BATTLE"}
                     </button>
+                    {/* 
+                        IMP: The nextStep function is only for debug purposes. 
+                        It doesnt take into account the speed of the bots to move them. 
+                    */}
                     <button
                         className="px-5 py-2 bg-white rounded-md"
                         onClick={nextStep}

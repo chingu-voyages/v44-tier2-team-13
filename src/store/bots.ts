@@ -232,8 +232,8 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                                 determiningBot.color
                             );
                             get().kill(nonDeterminingBot.name);
-                            determiningBot.pos.x -= determiningBot.direction.x;
-                            determiningBot.pos.y -= determiningBot.direction.y;
+                            // determiningBot.pos.x -= determiningBot.direction.x;
+                            // determiningBot.pos.y -= determiningBot.direction.y;
                         } else {
                             console.log("TIE");
                         }
@@ -266,6 +266,11 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         }),
 
     nextStep: () => {
+        console.warn(`
+        IMP: The nextStep function is only for debug purposes. 
+        It doesnt take into account the speed of the bots to move them. 
+        `);
+
         const state = get();
         const bots = [...state.bots];
         bots.forEach((bot) => {
