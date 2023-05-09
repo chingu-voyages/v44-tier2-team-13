@@ -18,4 +18,5 @@ export interface Bot {
     speed: number;
     pos: Vector;
     color?: string;
+    intervalId: number | null;
 }

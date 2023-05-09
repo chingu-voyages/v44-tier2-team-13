@@ -53,67 +53,11 @@ const generateBots = (n: number): Bot[] => {
                 "black",
                 "pink",
             ]),
+            intervalId: null,
         });
     }
     return res;
 };
-
-// const defaultBots: Bot[] = [
-//     {
-//         name: "A",
-//         boolValue: 0,
-//         pos: { x: 3, y: 7 },
-//         speed: 2,
-//         dead: false,
-//         direction: { x: 0, y: -1 }, // up
-//         color: "blue",
-//     },
-//     {
-//         name: "B",
-//         boolValue: 1,
-//         pos: { x: 0, y: 2 },
-//         speed: 4,
-//         dead: false,
-//         direction: { x: 0, y: 1 }, // down
-//         color: "green",
-//     },
-//     {
-//         name: "C",
-//         boolValue: 0,
-//         pos: { x: 3, y: 2 },
-//         speed: 1,
-//         dead: false,
-//         direction: { x: 1, y: 0 }, // right
-//         color: "red",
-//     },
-//     {
-//         name: "D",
-//         boolValue: 1,
-//         pos: { x: 4, y: 6 },
-//         speed: 3,
-//         dead: false,
-//         direction: { x: 1, y: 0 }, // right
-//         color: "yellow",
-//     },
-//     {
-//         name: "E",
-//         boolValue: 1,
-//         pos: { x: 5, y: 5 },
-//         speed: 2,
-//         dead: false,
-//         direction: { x: 1, y: 0 }, // right
-//         color: "pink",
-//     },
-//     {
-//         name: "F",
-//         boolValue: 0,
-//         pos: { x: 3, y: 0 },
-//         speed: 5,
-//         dead: false,
-//         direction: { x: 1, y: 0 }, // right
-//         color: "purple",
-//     },
-// ];
 
 const randomOneOrMinusOne = () => {
     if (Math.random() > 0.5) {
@@ -126,7 +70,7 @@ const randomOneOrMinusOne = () => {
 interface BotsState {
     operation: Operation;
     bots: Bot[];
-    intervalIds: number[];
+    // intervalIds: number[];
     running: boolean;
     createNew: (bot: Bot) => void;
     kill: (botName: string) => void;
@@ -134,13 +78,14 @@ interface BotsState {
     start: () => void;
     stop: () => void;
     nextStep: () => void;
+    pauseFor: (botName: string, ms: number) => void;
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.XOR,
-    bots: generateBots(30),
+    bots: generateBots(32),
     running: false,
-    intervalIds: [],
+    // intervalIds: [],
 
     createNew: (bot) =>
         set((state) => {
@@ -234,15 +179,16 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
                         // Removing the loser
                         if (result === 1) {
-                            console.log(
-                                determiningBot.name,
-                                determiningBot.color
-                            );
+                            // console.log(
+                            //     determiningBot.name,
+                            //     determiningBot.color
+                            // );
                             get().kill(nonDeterminingBot.name);
+                            get().pauseFor(determiningBot.name, 500);
                             // determiningBot.pos.x -= determiningBot.direction.x;
                             // determiningBot.pos.y -= determiningBot.direction.y;
                         } else {
-                            console.log("TIE");
+                            // console.log("TIE");
                         }
                     }
                 });
@@ -252,24 +198,24 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     start: () =>
         set((state) => {
-            const intervalIds: number[] = [];
             const bots = [...state.bots];
             bots.forEach((bot) => {
                 const id = setInterval(
                     () => state.update(bot.name),
                     1000 / bot.speed
                 );
-                intervalIds.push(id);
+                bot.intervalId = id;
             });
-            return { intervalIds, running: true };
+            return { bots, running: true };
         }),
 
     stop: () =>
         set((state) => {
-            state.intervalIds.forEach((id) => {
-                clearInterval(id);
+            const bots = [...state.bots];
+            bots.forEach((bot) => {
+                if (bot.intervalId) clearInterval(bot.intervalId);
             });
-            return { intervalIds: [], running: false };
+            return { bots, running: false };
         }),
 
     nextStep: () => {
@@ -282,6 +228,27 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         const bots = [...state.bots];
         bots.forEach((bot) => {
             state.update(bot.name);
+        });
+    },
+
+    pauseFor: (botName, ms) => {
+        set((state) => {
+            const bots = [...state.bots];
+            bots.forEach((bot) => {
+                if (bot.name !== botName || !bot.intervalId) return;
+                console.log(bot.intervalId);
+                clearInterval(bot.intervalId);
+                bot.intervalId = null;
+                // FIXME: RISK of not clearing this timeout
+                setTimeout(() => {
+                    console.log("HELLOW");
+                    bot.intervalId = setInterval(
+                        () => state.update(botName),
+                        1000 / bot.speed
+                    );
+                }, ms);
+            });
+            return { bots };
         });
     },
 }));

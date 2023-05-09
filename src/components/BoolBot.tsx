@@ -27,7 +27,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 // scale: dead ? 0.5 : 1,
                 transform: `scale(${dead ? 0 : 1})`,
                 borderRadius: boolValue === 0 ? "100%" : 0,
-                transitionDelay: `${TIMESTEP / 4}ms`,
+                // transitionDuration: `${100}ms`,
                 transitionTimingFunction: "linear",
             }}
             className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900 transition-all flex items-center justify-center"
