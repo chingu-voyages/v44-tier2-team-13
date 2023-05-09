@@ -28,10 +28,10 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 transform: `scale(${dead ? 0 : 1})`,
                 borderRadius: boolValue === 0 ? "100%" : 0,
             }}
-            className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900 transition-all"
+            className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900 transition-all flex items-center justify-center"
         >
             <div
-                className="flex flex-col gap-0 items-center justify-center leading-none"
+                className="flex flex-col gap-0 items-center justify-center leading-none bg-white/50 rounded-full aspect-square px-5"
                 onClick={() => {
                     // console.log("WHY DELAY");
                     kill(name);
@@ -40,9 +40,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 <span className="text-lg">{name}</span>
                 <span className="text-sm">{boolValue}</span>
                 {/* <span className="text-sm">{operation}</span> */}
-                <span>
-                    {pos.x}, {pos.y}
-                </span>
+                <span>{speed}</span>
             </div>
         </div>
     );
