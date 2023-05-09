@@ -42,7 +42,7 @@ const generateBots = (n: number): Bot[] => {
                 y: y,
             },
             pos: randomVector(0, 0, 8, 8),
-            speed: 1 + Math.floor(Math.random() * 8),
+            speed: 1 + Math.floor(Math.random() * 6),
             color: randomChoice([
                 "red",
                 "green",
@@ -137,8 +137,8 @@ interface BotsState {
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
-    operation: Operation.OR,
-    bots: generateBots(64),
+    operation: Operation.XOR,
+    bots: generateBots(30),
     running: false,
     intervalIds: [],
 
@@ -164,8 +164,15 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             bots.forEach((bot) => {
                 if (botName !== bot.name) return;
                 if (bot.dead) return;
+                // Prevent bots from spinning in circles on the border
+                // generating random direction based on probability of 0.5
+                if (Math.random() < 0.5) {
+                    bot.direction.x = randomChoice([-1, 0, 1]);
+                    bot.direction.y =
+                        bot.direction.x === 0 ? randomChoice([-1, 1]) : 0;
+                }
+                // bot.direction.x = randomChoice([-1, 0, 1])
                 // Move first
-                // TODO: Prevent bots from spinning in circles on the border
                 bot.pos.x += bot.direction.x;
                 bot.pos.y += bot.direction.y;
                 if (bot.pos.x >= 8 - 1 && bot.direction.x > 0) {

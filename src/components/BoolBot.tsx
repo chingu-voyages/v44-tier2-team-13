@@ -29,14 +29,12 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 borderRadius: boolValue === 0 ? "100%" : 0,
             }}
             className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900 transition-all flex items-center justify-center"
+            onClick={() => {
+                // console.log("WHY DELAY");
+                kill(name);
+            }}
         >
-            <div
-                className="flex flex-col gap-0 items-center justify-center leading-none bg-white/50 rounded-full aspect-square px-5"
-                onClick={() => {
-                    // console.log("WHY DELAY");
-                    kill(name);
-                }}
-            >
+            <div className="flex flex-col gap-0 items-center justify-center leading-none bg-white/50 rounded-full aspect-square px-5">
                 <span className="text-lg">{name}</span>
                 <span className="text-sm">{boolValue}</span>
                 {/* <span className="text-sm">{operation}</span> */}
