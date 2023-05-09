@@ -41,7 +41,7 @@ const generateBots = (n: number): Bot[] => {
                 x: x,
                 y: y,
             },
-            pos: randomVector(0, 0, 7, 7),
+            pos: randomVector(0, 0, 8, 8),
             speed: 1 + Math.floor(Math.random() * 8),
             color: randomChoice([
                 "red",
