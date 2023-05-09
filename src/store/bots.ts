@@ -133,6 +133,7 @@ interface BotsState {
     update: (botName: string) => void;
     start: () => void;
     stop: () => void;
+    nextStep: () => void;
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
@@ -263,4 +264,12 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             });
             return { intervalIds: [], running: false };
         }),
+
+    nextStep: () => {
+        const state = get();
+        const bots = [...state.bots];
+        bots.forEach((bot) => {
+            state.update(bot.name);
+        });
+    },
 }));

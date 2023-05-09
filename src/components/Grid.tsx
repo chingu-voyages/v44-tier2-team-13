@@ -9,9 +9,12 @@ interface GridProps {
 
 const Grid: FC<GridProps> = ({ cellSize }) => {
     const bots: Bot[] = useBotsStore((state) => state.bots);
+    const running = useBotsStore((state) => state.running);
+
     const start = useBotsStore((state) => state.start);
     const stop = useBotsStore((state) => state.stop);
-    const running = useBotsStore((state) => state.running);
+    const nextStep = useBotsStore((state) => state.nextStep);
+
     useEffect(() => {
         // start();
 
@@ -48,12 +51,20 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                     ))}
                 </div>
                 {/* <span className="text-white">{bots.length}</span> */}
-                <button
-                    className="px-5 py-2 bg-white rounded-md"
-                    onClick={running ? stop : start}
-                >
-                    {running ? "PAUSE" : "BATTLE"}
-                </button>
+                <div className="flex items-center justify-center gap-5">
+                    <button
+                        className="px-5 py-2 bg-white rounded-md"
+                        onClick={running ? stop : start}
+                    >
+                        {running ? "PAUSE" : "BATTLE"}
+                    </button>
+                    <button
+                        className="px-5 py-2 bg-white rounded-md"
+                        onClick={nextStep}
+                    >
+                        Next Step
+                    </button>
+                </div>
             </div>
         </>
     );
