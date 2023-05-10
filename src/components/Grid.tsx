@@ -78,7 +78,7 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         Num of 1 bots:{" "}
                         {
                             Object.values(bots).filter(
-                                (bot) => bot.boolValue === 0 && !bot.dead
+                                (bot) => bot.boolValue === 1 && !bot.dead
                             ).length
                         }
                     </span>
@@ -86,7 +86,7 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         Num of 0 bots:{" "}
                         {
                             Object.values(bots).filter(
-                                (bot) => bot.boolValue === 1 && !bot.dead
+                                (bot) => bot.boolValue === 0 && !bot.dead
                             ).length
                         }
                     </span>
