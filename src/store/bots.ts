@@ -257,7 +257,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
     nextStep: () => {
         set((state) => {
             const bots = { ...state.bots };
-            // if (state.running) return {};
+            if (state.running) return {};
             state.start();
             let greatestInterval = 0;
             Object.values(bots).forEach((bot) => {
