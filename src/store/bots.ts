@@ -122,7 +122,10 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
     kill: (botName) =>
         set((state) => {
             const bots = { ...state.bots };
-            bots[botName].dead = true;
+            const bot = bots[botName];
+            bot.dead = true;
+            if (bot.intervalId) clearInterval(bot.intervalId);
+            bot.intervalId = null;
             return { bots: bots };
         }),
 
@@ -130,7 +133,8 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         set((state) => {
             const bots = { ...state.bots };
             const bot = bots[botName];
-            if (bot.dead) return bots;
+            if (bot.dead) return {};
+            if (!bot.intervalId) return {};
             // Prevent bots from spinning in circles on the border
             // generating random direction based on probability of 0.5
             if (Math.random() < 0.5) {
@@ -198,13 +202,17 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                     }
 
                     // Removing the loser
-                    if (result === 1) {
-                        // console.log(
-                        //     determiningBot.name,
-                        //     determiningBot.color
-                        // );
+                    if (
+                        result === 1 &&
+                        determiningBot.intervalId && // not paused
+                        nonDeterminingBot.intervalId // not paused
+                    ) {
+                        console.log(
+                            `${determiningBot.name} ${determiningBot.color} - killed - ${nonDeterminingBot.name} ${nonDeterminingBot.color}`
+                        );
+
                         get().kill(nonDeterminingBot.name);
-                        get().pauseFor(determiningBot.name, 500);
+                        get().pauseFor(determiningBot.name, 1000);
                     } else {
                         // console.log("TIE");
                     }
@@ -252,19 +260,22 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
     pauseFor: (botName, ms) => {
         set((state) => {
             const bots = { ...state.bots };
-            Object.values(bots).forEach((bot) => {
-                if (bot.name !== botName || !bot.intervalId) return;
+            const bot = bots[botName];
+            if (bot.intervalId && !bot.dead) {
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
+                // console.log("Pausing: ", bot.name, bot.color);
                 // FIXME: RISK of not clearing this timeout
                 setTimeout(() => {
+                    // console.log("Playing: ", bot.name, bot.color);
                     bot.intervalId = setInterval(
                         () => state.update(botName),
                         1000 / bot.speed
                     );
                 }, ms);
-            });
-            return { bots };
+                return { bots };
+            }
+            return {};
         });
     },
 }));

@@ -8,7 +8,8 @@ interface BoolBotProps {
 }
 
 const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
-    const { color, pos, name, boolValue, direction, dead, speed } = bot;
+    const { color, pos, name, boolValue, direction, dead, speed, intervalId } =
+        bot;
     const TIMESTEP = 1000 / speed;
     const kill = useBotsStore((state) => state.kill);
 
@@ -26,6 +27,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 // opacity: dead ? 0 : 1,
                 // scale: dead ? 0.5 : 1,
                 transform: `scale(${dead ? 0 : 1})`,
+                opacity: `${!dead && !intervalId ? 0.5 : 1}`,
                 borderRadius: boolValue === 0 ? "100%" : 0,
                 // transitionDuration: `${100}ms`,
                 transitionTimingFunction: "linear",
@@ -37,7 +39,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
             }}
         >
             <div className="flex flex-col gap-0 items-center justify-center leading-none bg-white/50 rounded-full aspect-square px-5">
-                <span className="text-lg">{name.slice(0, 2)}..</span>
+                <span className="text-xs">{name.slice(0, 5)}..</span>
                 <span className="text-sm">{boolValue}</span>
                 {/* <span className="text-sm">{operation}</span> */}
                 <span>{speed}</span>
