@@ -96,8 +96,8 @@ const randomOneOrMinusOne = () => {
 interface BotsState {
     operation: Operation;
     bots: Bots;
-    // intervalIds: number[];
     running: boolean;
+    timeScale: number;
     createNew: (bot: Bot) => void;
     kill: (botName: string) => void;
     update: (botName: string) => void;
@@ -111,6 +111,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.XOR,
     bots: generateBots(64),
     running: false,
+    timeScale: 1,
 
     createNew: (bot) =>
         set((state) => {
@@ -210,9 +211,11 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                         console.log(
                             `${determiningBot.name} ${determiningBot.color} - killed - ${nonDeterminingBot.name} ${nonDeterminingBot.color}`
                         );
-
-                        get().kill(nonDeterminingBot.name);
-                        get().pauseFor(determiningBot.name, 1000);
+                        state.pauseFor(
+                            determiningBot.name,
+                            1000 * state.timeScale
+                        );
+                        state.kill(nonDeterminingBot.name);
                     } else {
                         // console.log("TIE");
                     }
@@ -228,7 +231,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             Object.values(bots).forEach((bot) => {
                 const id = setInterval(
                     () => state.update(bot.name),
-                    1000 / bot.speed
+                    (state.timeScale * 1000) / bot.speed
                 );
                 bot.intervalId = id;
             });
@@ -264,13 +267,13 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             if (bot.intervalId && !bot.dead) {
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
-                // console.log("Pausing: ", bot.name, bot.color);
+                console.log("Pausing: ", bot.name, bot.color);
                 // FIXME: RISK of not clearing this timeout
                 setTimeout(() => {
-                    // console.log("Playing: ", bot.name, bot.color);
+                    console.log("Playing: ", bot.name, bot.color);
                     bot.intervalId = setInterval(
                         () => state.update(botName),
-                        1000 / bot.speed
+                        (state.timeScale * 1000) / bot.speed
                     );
                 }, ms);
                 return { bots };

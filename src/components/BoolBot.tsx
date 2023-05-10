@@ -12,6 +12,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
         bot;
     const TIMESTEP = 1000 / speed;
     const kill = useBotsStore((state) => state.kill);
+    const timeScale = useBotsStore((state) => state.timeScale);
 
     return (
         <div
@@ -29,7 +30,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
                 transform: `scale(${dead ? 0 : 1})`,
                 opacity: `${!dead && !intervalId ? 0.5 : 1}`,
                 borderRadius: boolValue === 0 ? "100%" : 0,
-                // transitionDuration: `${100}ms`,
+                transitionDuration: `${timeScale * 150}ms`,
                 transitionTimingFunction: "linear",
             }}
             className="absolute top-0 left-0 aspect-square bg-green-300 border border-primary-900 transition-all flex items-center justify-center"
