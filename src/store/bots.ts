@@ -134,7 +134,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         set((state) => {
             const bots = { ...state.bots };
             const bot = bots[botName];
-            if (bot.dead || !state.running || !bot.intervalId) return {};
+            if (bot.dead) return {};
             // if (!bot.intervalId) return {};
             // Prevent bots from spinning in circles on the border
             // generating random direction based on probability of 0.75
@@ -255,15 +255,27 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         }),
 
     nextStep: () => {
-        console.warn(`
-        IMP: The nextStep function is only for debug purposes. 
-        It doesnt take into account the speed of the bots to move them. 
-        `);
+        set((state) => {
+            const bots = { ...state.bots };
+            // if (state.running) return {};
+            state.start();
+            let greatestInterval = 0;
+            Object.values(bots).forEach((bot) => {
+                const interval = (state.timeScale * 1000) / bot.speed;
+                if (greatestInterval < interval) {
+                    greatestInterval = interval;
+                }
+                bot.timeoutId = setTimeout(() => {
+                    if (bot.intervalId) clearInterval(bot.intervalId);
+                    if (bot.timeoutId) clearTimeout(bot.timeoutId);
+                    bot.intervalId = null;
+                    bot.timeoutId = null;
+                }, interval);
+            });
 
-        const state = get();
-        const bots = { ...state.bots };
-        Object.values(bots).forEach((bot) => {
-            state.update(bot.name);
+            setTimeout(state.stop, greatestInterval);
+
+            return { bots };
         });
     },
 

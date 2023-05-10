@@ -64,12 +64,12 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         IMP: The nextStep function is only for debug purposes. 
                         It doesnt take into account the speed of the bots to move them. 
                     */}
-                    {/* <button
+                    <button
                         className="px-5 py-2 bg-white rounded-md"
                         onClick={nextStep}
                     >
                         Next Step
-                    </button> */}
+                    </button>
                 </div>
                 <div className="flex items-center justify-between text-white">
                     <span className="">
