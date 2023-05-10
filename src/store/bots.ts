@@ -269,10 +269,10 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             if (bot.intervalId && !bot.dead) {
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
-                console.log("Pausing: ", bot.name, bot.color);
+                // console.log("Pausing: ", bot.name, bot.color);
                 // FIXME: RISK of not clearing this timeout
                 setTimeout(() => {
-                    console.log("Playing: ", bot.name, bot.color);
+                    // console.log("Playing: ", bot.name, bot.color);
                     bot.intervalId = setInterval(
                         () => state.update(botName),
                         (state.timeScale * 1000) / bot.speed
