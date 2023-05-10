@@ -112,7 +112,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.XOR,
     bots: generateBots(64),
     running: false,
-    timeScale: 0.1,
+    timeScale: 1,
 
     createNew: (bot) =>
         set((state) => {
