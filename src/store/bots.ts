@@ -207,11 +207,15 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                     if (
                         result === 1 &&
                         determiningBot.intervalId && // not paused
-                        nonDeterminingBot.intervalId // not paused
+                        nonDeterminingBot.intervalId && // not paused
+                        determiningBot.name !== nonDeterminingBot.name // both can be equal if both have same speed. assume tie in that case
                     ) {
                         console.log(
                             `${determiningBot.name} ${determiningBot.color} - killed - ${nonDeterminingBot.name} ${nonDeterminingBot.color}`
                         );
+                        if (determiningBot.name === nonDeterminingBot.name) {
+                            throw new Error("Why does this happen");
+                        }
                         state.pauseFor(
                             determiningBot.name,
                             1000 * state.timeScale
