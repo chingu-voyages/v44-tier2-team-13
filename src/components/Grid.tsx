@@ -10,10 +10,12 @@ interface GridProps {
 const Grid: FC<GridProps> = ({ cellSize }) => {
     const bots: Bots = useBotsStore((state) => state.bots);
     const running = useBotsStore((state) => state.running);
+    const timeScale = useBotsStore((state) => state.timeScale);
 
     const start = useBotsStore((state) => state.start);
     const stop = useBotsStore((state) => state.stop);
     const nextStep = useBotsStore((state) => state.nextStep);
+    const setTimeScale = useBotsStore((state) => state.setTimeScale);
 
     useEffect(() => {
         // start();
@@ -90,6 +92,22 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                             ).length
                         }
                     </span>
+                </div>
+                <div className="text-white flex items-center justify-center gap-2">
+                    <label htmlFor="timescale">Time Scale</label>
+                    <input
+                        type="range"
+                        name="timescale"
+                        id="timescale"
+                        min={0.1}
+                        max={10}
+                        step={0.1}
+                        defaultValue={timeScale}
+                        onChange={(e) =>
+                            setTimeScale(parseInt(e.currentTarget.value))
+                        }
+                        disabled={running}
+                    />
                 </div>
             </div>
         </>

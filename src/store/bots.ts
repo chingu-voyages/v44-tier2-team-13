@@ -105,13 +105,14 @@ interface BotsState {
     stop: () => void;
     nextStep: () => void;
     pauseFor: (botName: string, ms: number) => void;
+    setTimeScale: (timeScale: number) => void;
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.XOR,
     bots: generateBots(64),
     running: false,
-    timeScale: 1,
+    timeScale: 0.1,
 
     createNew: (bot) =>
         set((state) => {
@@ -243,6 +244,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             const bots = { ...state.bots };
             Object.values(bots).forEach((bot) => {
                 if (bot.intervalId) clearInterval(bot.intervalId);
+                bot.intervalId = null;
             });
             return { bots, running: false };
         }),
@@ -279,6 +281,17 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                 return { bots };
             }
             return {};
+        });
+    },
+
+    setTimeScale: (timeScale) => {
+        set((state) => {
+            if (state.running) {
+                throw new Error(
+                    "Cant change timestep while running. Pause it first."
+                );
+            }
+            return { timeScale };
         });
     },
 }));
