@@ -100,14 +100,15 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         name="timescale"
                         id="timescale"
                         min={0.1}
-                        max={10}
+                        max={2}
                         step={0.1}
                         defaultValue={timeScale}
-                        onChange={(e) =>
-                            setTimeScale(parseInt(e.currentTarget.value))
-                        }
+                        onChange={(e) => {
+                            setTimeScale(parseFloat(e.currentTarget.value));
+                        }}
                         disabled={running}
                     />
+                    {timeScale.toFixed(1)}
                 </div>
             </div>
         </>
