@@ -68,8 +68,27 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                     >
                         Next Step
                     </button>
-                    <span className="text-white">
-                        Num of Bots: {Object.values(bots).length}
+                </div>
+                <div className="flex items-center justify-between text-white">
+                    <span className="">
+                        Num of Bots alive:{" "}
+                        {Object.values(bots).filter((bot) => !bot.dead).length}
+                    </span>
+                    <span>
+                        Num of 1 bots:{" "}
+                        {
+                            Object.values(bots).filter(
+                                (bot) => bot.boolValue === 0 && !bot.dead
+                            ).length
+                        }
+                    </span>
+                    <span>
+                        Num of 0 bots:{" "}
+                        {
+                            Object.values(bots).filter(
+                                (bot) => bot.boolValue === 1 && !bot.dead
+                            ).length
+                        }
                     </span>
                 </div>
             </div>
