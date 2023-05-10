@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { Bot, Bots, Operation } from "../lib/types";
+import { Bots } from "../lib/types";
 import BoolBot from "./BoolBot";
 import { useBotsStore } from "../store/bots";
 
@@ -15,7 +15,9 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
     const start = useBotsStore((state) => state.start);
     const stop = useBotsStore((state) => state.stop);
     const nextStep = useBotsStore((state) => state.nextStep);
-    const setTimeScale = useBotsStore((state) => state.setTimeScale);
+    const setTimeScaleWhileRunning = useBotsStore(
+        (state) => state.setTimeScaleWhileRunning
+    );
 
     useEffect(() => {
         // start();
@@ -60,13 +62,10 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                     >
                         {running ? "PAUSE" : "BATTLE"}
                     </button>
-                    {/* 
-                        IMP: The nextStep function is only for debug purposes. 
-                        It doesnt take into account the speed of the bots to move them. 
-                    */}
                     <button
                         className="px-5 py-2 bg-white rounded-md"
                         onClick={nextStep}
+                        disabled={running}
                     >
                         Next Step
                     </button>
@@ -104,9 +103,11 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         step={0.1}
                         defaultValue={timeScale}
                         onChange={(e) => {
-                            setTimeScale(parseFloat(e.currentTarget.value));
+                            setTimeScaleWhileRunning(
+                                parseFloat(e.currentTarget.value)
+                            );
                         }}
-                        disabled={running}
+                        // disabled={running}
                     />
                     {timeScale.toFixed(1)}
                 </div>

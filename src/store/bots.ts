@@ -62,7 +62,7 @@ const generateBots = (n: number): Bots => {
                 y: y,
             },
             pos: randomVector(0, 0, 8, 8),
-            speed: 1 + Math.floor(Math.random() * 6),
+            speed: 1 + Math.floor(Math.random() * 8),
             color: randomChoice([
                 "red",
                 "green",
@@ -105,6 +105,7 @@ interface BotsState {
     nextStep: () => void;
     pauseFor: (botName: string, ms: number) => void;
     setTimeScale: (timeScale: number) => void;
+    setTimeScaleWhileRunning: (timeScale: number) => void;
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
@@ -233,6 +234,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         set((state) => {
             const bots = { ...state.bots };
             Object.values(bots).forEach((bot) => {
+                if (bot.dead) return;
                 const id = setInterval(
                     () => state.update(bot.name),
                     (state.timeScale * 1000) / bot.speed
@@ -246,6 +248,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         set((state) => {
             const bots = { ...state.bots };
             Object.values(bots).forEach((bot) => {
+                if (bot.dead) return;
                 if (bot.intervalId) clearInterval(bot.intervalId);
                 if (bot.timeoutId) clearTimeout(bot.timeoutId);
                 bot.intervalId = null;
@@ -261,6 +264,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             state.start();
             let greatestInterval = 0;
             Object.values(bots).forEach((bot) => {
+                if (bot.dead) return;
                 const interval = (state.timeScale * 1000) / bot.speed;
                 if (greatestInterval < interval) {
                     greatestInterval = interval;
@@ -307,7 +311,22 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                     "Cant change timestep while running. Pause it first."
                 );
             }
+            // if (state.running) {
+            //     state.stop();
+            //     state.start();
+            // }
             return { timeScale };
         });
+    },
+
+    setTimeScaleWhileRunning: (timeScale) => {
+        const state = get();
+        if (state.running) {
+            state.stop();
+            state.setTimeScale(timeScale);
+            state.start();
+        } else {
+            state.setTimeScale(timeScale);
+        }
     },
 }));
