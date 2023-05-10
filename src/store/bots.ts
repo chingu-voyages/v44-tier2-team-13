@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Bot, Operation, Vector } from "../lib/types";
+import { Bot, Bots, Operation, Vector } from "../lib/types";
 
 const randomChoice = (arr: any[]) => {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -17,8 +17,8 @@ const randomVector = (
     };
 };
 
-const generateBots = (n: number): Bot[] => {
-    const res: Bot[] = [];
+const generateBots = (n: number): Bots => {
+    const res: Bots = {};
     if (n > 64) {
         throw new Error("Not enough names in the generateBots method");
     }
@@ -33,7 +33,7 @@ const generateBots = (n: number): Bot[] => {
         // generating direction
         const x = randomChoice([-1, 0, 1]);
         const y = x === 0 ? randomChoice([-1, 1]) : 0;
-        res.push({
+        const bot: Bot = {
             name: uniqueName,
             boolValue: randomChoice([0, 1]),
             dead: false,
@@ -54,7 +54,8 @@ const generateBots = (n: number): Bot[] => {
                 "pink",
             ]),
             intervalId: null,
-        });
+        };
+        res[uniqueName] = bot;
     }
     return res;
 };
@@ -69,7 +70,7 @@ const randomOneOrMinusOne = () => {
 
 interface BotsState {
     operation: Operation;
-    bots: Bot[];
+    bots: Bots;
     // intervalIds: number[];
     running: boolean;
     createNew: (bot: Bot) => void;
@@ -83,123 +84,115 @@ interface BotsState {
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.XOR,
-    bots: generateBots(32),
+    bots: generateBots(64),
     running: false,
-    // intervalIds: [],
 
     createNew: (bot) =>
         set((state) => {
-            return { bots: [...state.bots, bot] };
+            const bots = { ...state.bots };
+            bots[bot.name] = bot;
+            return { bots };
         }),
 
     kill: (botName) =>
         set((state) => {
-            const bots = [...state.bots];
-            bots.forEach((bot) => {
-                if (bot.name === botName) {
-                    bot.dead = true;
-                }
-            });
+            const bots = { ...state.bots };
+            bots[botName].dead = true;
             return { bots: bots };
         }),
 
     update: (botName) =>
         set((state) => {
-            const bots = [...state.bots];
-            bots.forEach((bot) => {
-                if (botName !== bot.name) return;
-                if (bot.dead) return;
-                // Prevent bots from spinning in circles on the border
-                // generating random direction based on probability of 0.5
-                if (Math.random() < 0.5) {
-                    bot.direction.x = randomChoice([-1, 0, 1]);
-                    bot.direction.y =
-                        bot.direction.x === 0 ? randomChoice([-1, 1]) : 0;
-                }
-                // bot.direction.x = randomChoice([-1, 0, 1])
-                // Move first
-                bot.pos.x += bot.direction.x;
-                bot.pos.y += bot.direction.y;
-                if (bot.pos.x >= 8 - 1 && bot.direction.x > 0) {
-                    bot.direction.x = 0;
-                    bot.direction.y = randomOneOrMinusOne();
-                    bot.pos.x = 7;
-                } else if (bot.pos.x <= 0 && bot.direction.x < 0) {
-                    bot.direction.x = 0;
-                    bot.direction.y = randomOneOrMinusOne();
-                    bot.pos.x = 0;
-                }
+            const bots = { ...state.bots };
+            const bot = bots[botName];
+            if (bot.dead) return bots;
+            // Prevent bots from spinning in circles on the border
+            // generating random direction based on probability of 0.5
+            if (Math.random() < 0.5) {
+                bot.direction.x = randomChoice([-1, 0, 1]);
+                bot.direction.y =
+                    bot.direction.x === 0 ? randomChoice([-1, 1]) : 0;
+            }
+            // bot.direction.x = randomChoice([-1, 0, 1])
+            // Move first
+            bot.pos.x += bot.direction.x;
+            bot.pos.y += bot.direction.y;
+            if (bot.pos.x >= 8 - 1 && bot.direction.x > 0) {
+                bot.direction.x = 0;
+                bot.direction.y = randomOneOrMinusOne();
+                bot.pos.x = 7;
+            } else if (bot.pos.x <= 0 && bot.direction.x < 0) {
+                bot.direction.x = 0;
+                bot.direction.y = randomOneOrMinusOne();
+                bot.pos.x = 0;
+            }
 
-                if (bot.pos.y >= 8 - 1 && bot.direction.y > 0) {
-                    bot.direction.y = 0;
-                    bot.direction.x = randomOneOrMinusOne();
-                    bot.pos.y = 7;
-                } else if (bot.pos.y <= 0 && bot.direction.y < 0) {
-                    bot.direction.y = 0;
-                    bot.direction.x = randomOneOrMinusOne();
-                    bot.pos.y = 0;
-                }
+            if (bot.pos.y >= 8 - 1 && bot.direction.y > 0) {
+                bot.direction.y = 0;
+                bot.direction.x = randomOneOrMinusOne();
+                bot.pos.y = 7;
+            } else if (bot.pos.y <= 0 && bot.direction.y < 0) {
+                bot.direction.y = 0;
+                bot.direction.x = randomOneOrMinusOne();
+                bot.pos.y = 0;
+            }
 
-                // Check for collisions
-                bots.forEach((obot) => {
-                    if (bot === obot) return; // avoid self collision
-                    if (obot.dead) return;
+            // Check for collisions
+            Object.keys(bots).forEach((obot_key) => {
+                const obot = bots[obot_key];
+                if (bot === obot) return; // avoid self collision
+                if (obot.dead) return;
 
-                    // checking if the updated position overlaps with an already existing bot
-                    if (bot.pos.x === obot.pos.x && bot.pos.y === obot.pos.y) {
-                        // --- Collision ---
-                        // Check WIN or LOSE
-                        const determiningBot =
-                            bot.speed > obot.speed ? bot : obot; // bot with greater speed will be the winning bot in case of 1
-                        const nonDeterminingBot =
-                            bot.speed < obot.speed ? bot : obot; // bot with lesser speed will be the losing bot in case of 1
+                // checking if the updated position overlaps with an already existing bot
+                if (bot.pos.x === obot.pos.x && bot.pos.y === obot.pos.y) {
+                    // --- Collision ---
+                    // Check WIN or LOSE
+                    const determiningBot = bot.speed > obot.speed ? bot : obot; // bot with greater speed will be the winning bot in case of 1
+                    const nonDeterminingBot =
+                        bot.speed < obot.speed ? bot : obot; // bot with lesser speed will be the losing bot in case of 1
 
-                        let result: 0 | 1;
-                        switch (state.operation) {
-                            case Operation.AND:
-                                result = bot.boolValue && obot.boolValue;
-                                break;
-                            case Operation.OR:
-                                result = bot.boolValue || obot.boolValue;
-                                break;
-                            case Operation.NOR:
-                                result = !(bot.boolValue || obot.boolValue)
+                    let result: 0 | 1;
+                    switch (state.operation) {
+                        case Operation.AND:
+                            result = bot.boolValue && obot.boolValue;
+                            break;
+                        case Operation.OR:
+                            result = bot.boolValue || obot.boolValue;
+                            break;
+                        case Operation.NOR:
+                            result = !(bot.boolValue || obot.boolValue) ? 1 : 0;
+                            break;
+                        case Operation.XOR:
+                            // Copied off of the internet
+                            result =
+                                (bot.boolValue || obot.boolValue) &&
+                                !(bot.boolValue && obot.boolValue)
                                     ? 1
                                     : 0;
-                                break;
-                            case Operation.XOR:
-                                // Copied off of the internet
-                                result =
-                                    (bot.boolValue || obot.boolValue) &&
-                                    !(bot.boolValue && obot.boolValue)
-                                        ? 1
-                                        : 0;
-                                break;
-                        }
-
-                        // Removing the loser
-                        if (result === 1) {
-                            // console.log(
-                            //     determiningBot.name,
-                            //     determiningBot.color
-                            // );
-                            get().kill(nonDeterminingBot.name);
-                            get().pauseFor(determiningBot.name, 500);
-                            // determiningBot.pos.x -= determiningBot.direction.x;
-                            // determiningBot.pos.y -= determiningBot.direction.y;
-                        } else {
-                            // console.log("TIE");
-                        }
+                            break;
                     }
-                });
+
+                    // Removing the loser
+                    if (result === 1) {
+                        // console.log(
+                        //     determiningBot.name,
+                        //     determiningBot.color
+                        // );
+                        get().kill(nonDeterminingBot.name);
+                        get().pauseFor(determiningBot.name, 500);
+                    } else {
+                        // console.log("TIE");
+                    }
+                }
             });
+
             return { bots };
         }),
 
     start: () =>
         set((state) => {
-            const bots = [...state.bots];
-            bots.forEach((bot) => {
+            const bots = { ...state.bots };
+            Object.values(bots).forEach((bot) => {
                 const id = setInterval(
                     () => state.update(bot.name),
                     1000 / bot.speed
@@ -211,8 +204,8 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     stop: () =>
         set((state) => {
-            const bots = [...state.bots];
-            bots.forEach((bot) => {
+            const bots = { ...state.bots };
+            Object.values(bots).forEach((bot) => {
                 if (bot.intervalId) clearInterval(bot.intervalId);
             });
             return { bots, running: false };
@@ -225,23 +218,21 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         `);
 
         const state = get();
-        const bots = [...state.bots];
-        bots.forEach((bot) => {
+        const bots = { ...state.bots };
+        Object.values(bots).forEach((bot) => {
             state.update(bot.name);
         });
     },
 
     pauseFor: (botName, ms) => {
         set((state) => {
-            const bots = [...state.bots];
-            bots.forEach((bot) => {
+            const bots = { ...state.bots };
+            Object.values(bots).forEach((bot) => {
                 if (bot.name !== botName || !bot.intervalId) return;
-                console.log(bot.intervalId);
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
                 // FIXME: RISK of not clearing this timeout
                 setTimeout(() => {
-                    console.log("HELLOW");
                     bot.intervalId = setInterval(
                         () => state.update(botName),
                         1000 / bot.speed

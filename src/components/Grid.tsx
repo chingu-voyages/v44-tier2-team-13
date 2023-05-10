@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { Bot, Operation } from "../lib/types";
+import { Bot, Bots, Operation } from "../lib/types";
 import BoolBot from "./BoolBot";
 import { useBotsStore } from "../store/bots";
 
@@ -8,7 +8,7 @@ interface GridProps {
 }
 
 const Grid: FC<GridProps> = ({ cellSize }) => {
-    const bots: Bot[] = useBotsStore((state) => state.bots);
+    const bots: Bots = useBotsStore((state) => state.bots);
     const running = useBotsStore((state) => state.running);
 
     const start = useBotsStore((state) => state.start);
@@ -46,7 +46,7 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         ))
                     )}
 
-                    {bots.map((bot) => (
+                    {Object.values(bots).map((bot) => (
                         <BoolBot key={bot.name} bot={bot} cellSize={cellSize} />
                     ))}
                 </div>

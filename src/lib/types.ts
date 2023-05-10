@@ -20,3 +20,8 @@ export interface Bot {
     color?: string;
     intervalId: number | null;
 }
+
+// using hasmap for the bots
+export interface Bots {
+    [key: string]: Bot;
+}
