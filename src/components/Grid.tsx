@@ -68,6 +68,9 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                     >
                         Next Step
                     </button>
+                    <span className="text-white">
+                        Num of Bots: {Object.values(bots).length}
+                    </span>
                 </div>
             </div>
         </>

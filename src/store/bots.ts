@@ -17,18 +17,38 @@ const randomVector = (
     };
 };
 
-const generateBots = (n: number): Bots => {
-    const res: Bots = {};
-    if (n > 64) {
-        throw new Error("Not enough names in the generateBots method");
+const generateUniqueNames = (n: number): string[] => {
+    const charPool = "abcdefghijklmnopqrstuvwxyz"; // max combinations is 325
+    const availableNames: string[] = [];
+    let count = 0;
+    for (let i = 0; i < charPool.length; i++) {
+        for (let j = i + 1; j < charPool.length; j++) {
+            count++;
+            const name = charPool.slice(i, j);
+            // console.log(name);
+            availableNames.push(name);
+            if (count > n) {
+                return availableNames;
+            }
+        }
     }
-    let availableNames = [
-        ..."abcdefghijklmnopqrstuvwxyz1234567890_ !@#$%^&*()-+=[]{}|';:<>,.?/", // just 65 random characters to cap max number of bots
-    ];
+    return availableNames;
+};
+
+const generateBots = (n: number): Bots => {
+    const bots: Bots = {};
+    // Generating unique names
+    let availableNames = generateUniqueNames(n);
+
+    if (n > availableNames.length) {
+        throw new Error(
+            `Number of generated names is ${availableNames.length} in the generateBots method. Cannot exceed that limit`
+        );
+    }
     for (let i = 0; i < n; i++) {
         // generating names
-        const uniqueName = randomChoice(availableNames);
-        availableNames = availableNames.filter((name) => name !== uniqueName); // Just removing the name from the arr
+        const uniqueName = availableNames[i];
+        // availableNames = availableNames.filter((name) => name !== uniqueName); // Just removing the name from the arr
 
         // generating direction
         const x = randomChoice([-1, 0, 1]);
@@ -55,9 +75,14 @@ const generateBots = (n: number): Bots => {
             ]),
             intervalId: null,
         };
-        res[uniqueName] = bot;
+        if (uniqueName in bots) {
+            throw new Error(`${uniqueName} name already exists`);
+        }
+
+        bots[uniqueName] = bot;
+        // console.log(uniqueName, i);
     }
-    return res;
+    return bots;
 };
 
 const randomOneOrMinusOne = () => {
