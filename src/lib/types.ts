@@ -18,7 +18,8 @@ export interface Bot {
     speed: number;
     pos: Vector;
     color?: string;
-    intervalId: number | null;
+    intervalId?: number | null;
+    timeoutId?: number | null;
 }
 
 // using hasmap for the bots

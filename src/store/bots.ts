@@ -73,7 +73,6 @@ const generateBots = (n: number): Bots => {
                 "black",
                 "pink",
             ]),
-            intervalId: null,
         };
         if (uniqueName in bots) {
             throw new Error(`${uniqueName} name already exists`);
@@ -109,7 +108,7 @@ interface BotsState {
 }
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
-    operation: Operation.XOR,
+    operation: Operation.OR,
     bots: generateBots(64),
     running: false,
     timeScale: 1,
@@ -135,11 +134,11 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         set((state) => {
             const bots = { ...state.bots };
             const bot = bots[botName];
-            if (bot.dead) return {};
-            if (!bot.intervalId) return {};
+            if (bot.dead || !state.running || !bot.intervalId) return {};
+            // if (!bot.intervalId) return {};
             // Prevent bots from spinning in circles on the border
-            // generating random direction based on probability of 0.5
-            if (Math.random() < 0.5) {
+            // generating random direction based on probability of 0.75
+            if (Math.random() < 0.75) {
                 bot.direction.x = randomChoice([-1, 0, 1]);
                 bot.direction.y =
                     bot.direction.x === 0 ? randomChoice([-1, 1]) : 0;
@@ -248,7 +247,9 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             const bots = { ...state.bots };
             Object.values(bots).forEach((bot) => {
                 if (bot.intervalId) clearInterval(bot.intervalId);
+                if (bot.timeoutId) clearTimeout(bot.timeoutId);
                 bot.intervalId = null;
+                bot.timeoutId = null;
             });
             return { bots, running: false };
         }),
@@ -270,12 +271,11 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
         set((state) => {
             const bots = { ...state.bots };
             const bot = bots[botName];
-            if (bot.intervalId && !bot.dead) {
+            if (bot.intervalId && !bot.dead && state.running) {
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
                 // console.log("Pausing: ", bot.name, bot.color);
-                // FIXME: RISK of not clearing this timeout
-                setTimeout(() => {
+                bot.timeoutId = setTimeout(() => {
                     // console.log("Playing: ", bot.name, bot.color);
                     bot.intervalId = setInterval(
                         () => state.update(botName),
