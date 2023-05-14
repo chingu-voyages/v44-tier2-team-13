@@ -8,7 +8,7 @@ interface GridProps {
 }
 
 const Grid: FC<GridProps> = ({ cellSize }) => {
-    const bots: Bots = useBotsStore((state) => state.bots);
+    const bots = useBotsStore((state) => state.bots);
     const running = useBotsStore((state) => state.running);
     const timeScale = useBotsStore((state) => state.timeScale);
 
@@ -50,8 +50,8 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                         ))
                     )}
 
-                    {Object.values(bots).map((bot) => (
-                        <BoolBot key={bot.name} bot={bot} cellSize={cellSize} />
+                    {[...bots].map(([key, bot]) => (
+                        <BoolBot key={key} bot={bot} cellSize={cellSize} />
                     ))}
                 </div>
                 {/* <span className="text-white">{bots.length}</span> */}
@@ -73,21 +73,21 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                 <div className="flex items-center justify-between text-white">
                     <span className="">
                         Num of Bots alive:{" "}
-                        {Object.values(bots).filter((bot) => !bot.dead).length}
+                        {[...bots].filter(([_, bot]) => !bot.dead).length}
                     </span>
                     <span>
                         Num of 1 bots:{" "}
                         {
-                            Object.values(bots).filter(
-                                (bot) => bot.boolValue === 1 && !bot.dead
+                            [...bots].filter(
+                                ([_, bot]) => bot.boolValue === 1 && !bot.dead
                             ).length
                         }
                     </span>
                     <span>
                         Num of 0 bots:{" "}
                         {
-                            Object.values(bots).filter(
-                                (bot) => bot.boolValue === 0 && !bot.dead
+                            [...bots].filter(
+                                ([_, bot]) => bot.boolValue === 0 && !bot.dead
                             ).length
                         }
                     </span>

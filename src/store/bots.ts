@@ -35,8 +35,8 @@ const generateUniqueNames = (n: number): string[] => {
     return availableNames;
 };
 
-const generateBots = (n: number): Bots => {
-    const bots: Bots = {};
+const generateBots = (n: number): Map<string, Bot> => {
+    const bots = new Map();
     // Generating unique names
     let availableNames = generateUniqueNames(n);
 
@@ -78,7 +78,7 @@ const generateBots = (n: number): Bots => {
             throw new Error(`${uniqueName} name already exists`);
         }
 
-        bots[uniqueName] = bot;
+        bots.set(uniqueName, bot);
         // console.log(uniqueName, i);
     }
     return bots;
@@ -94,7 +94,7 @@ const randomOneOrMinusOne = () => {
 
 interface BotsState {
     operation: Operation;
-    bots: Bots;
+    bots: Map<string, Bot>;
     running: boolean;
     timeScale: number;
     createNew: (bot: Bot) => void;
@@ -110,21 +110,23 @@ interface BotsState {
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.OR,
-    bots: generateBots(64),
+    bots: generateBots(256),
     running: false,
     timeScale: 1,
 
     createNew: (bot) =>
         set((state) => {
-            const bots = { ...state.bots };
-            bots[bot.name] = bot;
+            const bots = new Map(state.bots);
+            bots.set(bot.name, bot);
             return { bots };
         }),
 
     kill: (botName) =>
         set((state) => {
-            const bots = { ...state.bots };
-            const bot = bots[botName];
+            const bots = new Map(state.bots);
+            const bot = bots.get(botName);
+            if (!bot)
+                throw new Error(`Bot with name ${botName} does not exist.`);
             bot.dead = true;
             if (bot.intervalId) clearInterval(bot.intervalId);
             bot.intervalId = null;
@@ -133,8 +135,10 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     update: (botName) =>
         set((state) => {
-            const bots = { ...state.bots };
-            const bot = bots[botName];
+            const bots = new Map(state.bots);
+            const bot = bots.get(botName);
+            if (!bot)
+                throw new Error(`Bot with name ${botName} does not exist.`);
             if (bot.dead) return {};
             // if (!bot.intervalId) return {};
             // Prevent bots from spinning in circles on the border
@@ -169,8 +173,11 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             }
 
             // Check for collisions
-            Object.keys(bots).forEach((obot_key) => {
-                const obot = bots[obot_key];
+            bots.forEach((obot) => {
+                // const obot = bots.get(obot_key);
+                // if (!obot)
+                //     throw new Error(`Bot with name ${obot_key} does not exist.`);
+
                 if (bot === obot) return; // avoid self collision
                 if (obot.dead) return;
 
@@ -232,8 +239,8 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     start: () =>
         set((state) => {
-            const bots = { ...state.bots };
-            Object.values(bots).forEach((bot) => {
+            const bots = new Map(state.bots);
+            bots.forEach((bot) => {
                 if (bot.dead) return;
                 const id = setInterval(
                     () => state.update(bot.name),
@@ -246,8 +253,8 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     stop: () =>
         set((state) => {
-            const bots = { ...state.bots };
-            Object.values(bots).forEach((bot) => {
+            const bots = new Map(state.bots);
+            bots.forEach((bot) => {
                 if (bot.dead) return;
                 if (bot.intervalId) clearInterval(bot.intervalId);
                 if (bot.timeoutId) clearTimeout(bot.timeoutId);
@@ -259,11 +266,11 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     nextStep: () => {
         set((state) => {
-            const bots = { ...state.bots };
+            const bots = new Map(state.bots);
             if (state.running) return {};
             state.start();
             let greatestInterval = 0;
-            Object.values(bots).forEach((bot) => {
+            bots.forEach((bot) => {
                 if (bot.dead) return;
                 const interval = (state.timeScale * 1000) / bot.speed;
                 if (greatestInterval < interval) {
@@ -285,8 +292,10 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
 
     pauseFor: (botName, ms) => {
         set((state) => {
-            const bots = { ...state.bots };
-            const bot = bots[botName];
+            const bots = new Map(state.bots);
+            const bot = bots.get(botName);
+            if (!bot)
+                throw new Error(`Bot with name ${botName} does not exist.`);
             if (bot.intervalId && !bot.dead && state.running) {
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
