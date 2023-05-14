@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Bot, Bots, Operation, Vector } from "../lib/types";
+import { Bot, Operation, Vector } from "../lib/types";
 
 const randomChoice = (arr: any[]) => {
     return arr[Math.floor(Math.random() * arr.length)];

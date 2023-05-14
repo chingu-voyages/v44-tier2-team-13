@@ -1,5 +1,4 @@
 import { FC, useEffect } from "react";
-import { Bots } from "../lib/types";
 import BoolBot from "./BoolBot";
 import { useBotsStore } from "../store/bots";
 

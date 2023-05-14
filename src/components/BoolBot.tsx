@@ -8,9 +8,7 @@ interface BoolBotProps {
 }
 
 const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
-    const { color, pos, name, boolValue, direction, dead, speed, intervalId } =
-        bot;
-    const TIMESTEP = 1000 / speed;
+    const { color, pos, name, boolValue, dead, speed, intervalId } = bot;
     const kill = useBotsStore((state) => state.kill);
     const timeScale = useBotsStore((state) => state.timeScale);
 
