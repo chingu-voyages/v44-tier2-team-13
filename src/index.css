@@ -1,7 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-#root, body, html {
-  @apply w-full h-full;
+#root,
+body,
+html {
+    @apply w-full h-full;
+}
+
+.slider {
+    width: 175px;
+    -webkit-appearance: none;
+    background: black;
+    background-image: linear-gradient(black, black);
+    background-repeat: no-repeat;
+    height: 3px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: white;
 }
