@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { Operation } from "../lib/types";
 import { useBotsStore } from "../store/bots";
 
 function Form() {
     const createNew = useBotsStore((state) => state.createNew);
+    const changeOperation = useBotsStore((state) => state.changeOperation);
 
+    const [operation, setOperation] = useState("");
     const [name, setName] = useState("");
     const [boolval, setBoolVal] = useState(0);
     const [color, setColor] = useState("");
@@ -39,6 +42,19 @@ function Form() {
         }
     }
 
+    function handleOperation(e: string) {
+        setOperation(e);
+        if (operation === "AND") {
+            changeOperation(Operation.AND);
+        } else if (operation === "OR") {
+            changeOperation(Operation.OR);
+        } else if (operation === "XOR") {
+            changeOperation(Operation.XOR);
+        } else if (operation === "NOR") {
+            changeOperation(Operation.NOR);
+        }
+    }
+
     function createNewBot() {
         createNew({
             name: name,
@@ -52,6 +68,15 @@ function Form() {
             speed: speed,
             color: color,
         });
+
+        setName("");
+        setBoolVal(0);
+        setColor("");
+        setStartDirection({
+            x: 0,
+            y: 0,
+        });
+        setSpeed(2);
     }
 
     return (
@@ -60,14 +85,17 @@ function Form() {
                 <label className="font-bold text-xl font-Inter text-[#F5F5F5]">
                     Operation
                 </label>
-                <select className="w-[166px] h-[28px] font-Inter cursor-pointer rounded">
+                <select
+                    onChange={(e) => handleOperation(e.target.value)}
+                    className="w-[166px] h-[28px] font-Inter cursor-pointer rounded"
+                >
                     <option selected disabled>
                         Select
                     </option>
-                    <option>AND</option>
-                    <option>OR</option>
-                    <option>XOR</option>
-                    <option>NOR</option>
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                    <option value="XOR">XOR</option>
+                    <option value="NOR">NOR</option>
                 </select>
             </div>
             <div className="flex flex-col items-center justify-evenly w-[345px] h-[340px] bg-[#5C469C]">
@@ -75,6 +103,7 @@ function Form() {
                     <div className="flex justify-between">
                         <label className="text-xl font-bold">Name</label>
                         <input
+                            value={name}
                             placeholder="Enter Bot Name"
                             className="w-36 h-8 pl-1.5 font-Inter rounded"
                             type="text"
@@ -84,6 +113,7 @@ function Form() {
                     <div className="flex justify-between mt-2.5">
                         <label className="text-xl font-bold">Bool Value</label>
                         <select
+                            value={boolval}
                             onChange={(e) =>
                                 setBoolVal(parseInt(e.target.value, 10))
                             }
@@ -134,6 +164,7 @@ function Form() {
                         <label className="text-xl font-bold">Speed</label>
                         <div className="flex flex-col">
                             <input
+                                value={speed}
                                 type="range"
                                 min="0.5"
                                 max="5"
