@@ -110,7 +110,7 @@ interface BotsState {
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.OR,
-    bots: generateBots(64),
+    bots: new Map(),
     running: false,
     timeScale: 1,
 

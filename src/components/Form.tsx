@@ -1,4 +1,59 @@
+import { useState } from "react";
+import { useBotsStore } from "../store/bots";
+
 function Form() {
+    const createNew = useBotsStore((state) => state.createNew);
+
+    const [name, setName] = useState("");
+    const [boolval, setBoolVal] = useState(0);
+    const [color, setColor] = useState("");
+    const [startDirection, setStartDirection] = useState({
+        x: 0,
+        y: 0,
+    });
+    const [speed, setSpeed] = useState(2);
+
+    console.log(name, boolval, color, startDirection, speed);
+
+    function handleDirection(e: string) {
+        if (e === "north") {
+            setStartDirection({
+                x: 0,
+                y: 1,
+            });
+        } else if (e === "east") {
+            setStartDirection({
+                x: -1,
+                y: 0,
+            });
+        } else if (e === "west") {
+            setStartDirection({
+                x: 1,
+                y: 0,
+            });
+        } else if (e === "south") {
+            setStartDirection({
+                x: 0,
+                y: -1,
+            });
+        }
+    }
+
+    function createNewBot() {
+        createNew({
+            name: name,
+            boolValue: boolval as 0 | 1,
+            dead: false,
+            direction: startDirection,
+            pos: {
+                x: Math.floor(Math.random() * 8),
+                y: Math.floor(Math.random() * 8),
+            },
+            speed: speed,
+            color: color,
+        });
+    }
+
     return (
         <div>
             <div className="flex justify-between px-5 py-3 bg-[#5C469C] mb-5">
@@ -23,34 +78,49 @@ function Form() {
                             placeholder="Enter Bot Name"
                             className="w-36 h-8 pl-1.5 font-Inter rounded"
                             type="text"
+                            onChange={(e) => setName(e.target.value)}
                         ></input>
                     </div>
                     <div className="flex justify-between mt-2.5">
                         <label className="text-xl font-bold">Bool Value</label>
-                        <select className="w-36 h-8 cursor-pointer rounded">
+                        <select
+                            onChange={(e) =>
+                                setBoolVal(parseInt(e.target.value, 10))
+                            }
+                            className="w-36 h-8 cursor-pointer rounded"
+                        >
                             <option disabled selected>
                                 Select
                             </option>
-                            <option value={0}>0</option>
-                            <option value={1}>1</option>
+                            <option>0</option>
+                            <option>1</option>
                         </select>
                     </div>
                     <div className="flex justify-between mt-2.5">
                         <label className="text-xl font-bold">Colour</label>
-                        <select className="w-36 h-8 cursor-pointer rounded">
+                        <select
+                            onChange={(e) => setColor(e.target.value)}
+                            className="w-36 h-8 cursor-pointer rounded"
+                        >
                             <option disabled selected>
                                 Select
                             </option>
                             <option value="red">Red</option>
                             <option value="blue">Blue</option>
                             <option value="green">Green</option>
+                            <option value="white">White</option>
+                            <option value="black">Black</option>
+                            <option value="purple">Purple</option>
                         </select>
                     </div>
                     <div className="flex justify-between mt-2.5">
                         <label className="text-xl font-bold">
                             Start Direction
                         </label>
-                        <select className="w-28 h-7 cursor-pointer rounded">
+                        <select
+                            onChange={(e) => handleDirection(e.target.value)}
+                            className="w-28 h-7 cursor-pointer rounded"
+                        >
                             <option disabled selected>
                                 Select
                             </option>
@@ -65,9 +135,12 @@ function Form() {
                         <div className="flex flex-col">
                             <input
                                 type="range"
-                                min={0.5}
-                                max={5}
-                                defaultValue={2}
+                                min="0.5"
+                                max="5"
+                                step="0.1"
+                                onChange={(e) =>
+                                    setSpeed(parseFloat(e.target.value))
+                                }
                                 className="slider cursor-pointer"
                             ></input>
                             <div className="flex justify-between">
@@ -82,6 +155,7 @@ function Form() {
                     </div>
                 </form>
                 <button
+                    onClick={createNewBot}
                     type="button"
                     className="font-Inter w-32 h-8 bg-[#D4ADFC] rounded-lg text-xl font-bold"
                 >
