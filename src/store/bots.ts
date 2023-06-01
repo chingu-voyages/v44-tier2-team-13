@@ -97,6 +97,7 @@ interface BotsState {
     bots: Map<string, Bot>;
     running: boolean;
     timeScale: number;
+    changeOperation: (operation: Operation) => void;
     createNew: (bot: Bot) => void;
     kill: (botName: string) => void;
     update: (botName: string) => void;
@@ -110,9 +111,15 @@ interface BotsState {
 
 export const useBotsStore = create<BotsState>()((set, get) => ({
     operation: Operation.OR,
-    bots: generateBots(64),
+    bots: new Map(),
     running: false,
     timeScale: 1,
+
+    changeOperation: (operation) =>
+        set((state) => {
+            if (state.running) return {};
+            return { operation };
+        }),
 
     createNew: (bot) =>
         set((state) => {
