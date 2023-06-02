@@ -43,9 +43,7 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                                     height: `${cellSize}px`,
                                 }}
                                 className="border border-primary-900 aspect-square bg-primary-600 leading-none"
-                            >
-                                {j}, {i}
-                            </span>
+                            ></span>
                         ))
                     )}
 
