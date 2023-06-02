@@ -5,8 +5,9 @@ import { useBotsStore } from "../store/bots";
 function Form() {
     const createNew = useBotsStore((state) => state.createNew);
     const changeOperation = useBotsStore((state) => state.changeOperation);
+    const operation = useBotsStore((state) => state.operation);
+    const running = useBotsStore((state) => state.running);
 
-    const [operation, setOperation] = useState("");
     const [name, setName] = useState("");
     const [boolval, setBoolVal] = useState(0);
     const [color, setColor] = useState("");
@@ -42,17 +43,8 @@ function Form() {
         }
     }
 
-    function handleOperation(e: string) {
-        setOperation(e);
-        if (operation === "AND") {
-            changeOperation(Operation.AND);
-        } else if (operation === "OR") {
-            changeOperation(Operation.OR);
-        } else if (operation === "XOR") {
-            changeOperation(Operation.XOR);
-        } else if (operation === "NOR") {
-            changeOperation(Operation.NOR);
-        }
+    function handleOperation(e: Operation) {
+        changeOperation(e);
     }
 
     function createNewBot() {
@@ -86,16 +78,18 @@ function Form() {
                     Operation
                 </label>
                 <select
-                    onChange={(e) => handleOperation(e.target.value)}
-                    className="w-[166px] h-[28px] font-Inter cursor-pointer rounded"
+                    onChange={(e) =>
+                        handleOperation(e.target.value as Operation)
+                    }
+                    defaultValue={operation}
+                    disabled={running}
+                    className="w-[166px] h-[28px] font-Inter cursor-pointer rounded disabled:opacity-50"
                 >
-                    <option selected disabled>
-                        Select
-                    </option>
-                    <option value="AND">AND</option>
-                    <option value="OR">OR</option>
-                    <option value="XOR">XOR</option>
-                    <option value="NOR">NOR</option>
+                    <option disabled>Select</option>
+                    <option value="and">AND</option>
+                    <option value="or">OR</option>
+                    <option value="xor">XOR</option>
+                    <option value="nor">NOR</option>
                 </select>
             </div>
             <div className="flex flex-col items-center justify-evenly w-[345px] h-[340px] bg-[#5C469C]">

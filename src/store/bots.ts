@@ -216,6 +216,9 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                                     : 0;
                             break;
                     }
+                    console.log(
+                        `${determiningBot.boolValue} ${state.operation} ${nonDeterminingBot.boolValue} = ${result}`
+                    );
 
                     // Removing the loser
                     if (
@@ -224,9 +227,6 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                         nonDeterminingBot.intervalId && // not paused
                         determiningBot.name !== nonDeterminingBot.name // both can be equal if both have same speed. assume tie in that case
                     ) {
-                        console.log(
-                            `${determiningBot.name} ${determiningBot.color} - killed - ${nonDeterminingBot.name} ${nonDeterminingBot.color}`
-                        );
                         if (determiningBot.name === nonDeterminingBot.name) {
                             throw new Error("Why does this happen");
                         }
@@ -236,7 +236,6 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                         );
                         state.kill(nonDeterminingBot.name);
                     } else {
-                        // console.log("TIE");
                     }
                 }
             });
@@ -306,9 +305,7 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
             if (bot.intervalId && !bot.dead && state.running) {
                 clearInterval(bot.intervalId);
                 bot.intervalId = null;
-                // console.log("Pausing: ", bot.name, bot.color);
                 bot.timeoutId = setTimeout(() => {
-                    // console.log("Playing: ", bot.name, bot.color);
                     bot.intervalId = setInterval(
                         () => state.update(botName),
                         (state.timeScale * 1000) / bot.speed
@@ -327,10 +324,6 @@ export const useBotsStore = create<BotsState>()((set, get) => ({
                     "Cant change timestep while running. Pause it first."
                 );
             }
-            // if (state.running) {
-            //     state.stop();
-            //     state.start();
-            // }
             return { timeScale };
         });
     },
