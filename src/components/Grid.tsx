@@ -9,14 +9,9 @@ interface GridProps {
 const Grid: FC<GridProps> = ({ cellSize }) => {
     const bots = useBotsStore((state) => state.bots);
     const running = useBotsStore((state) => state.running);
-    const timeScale = useBotsStore((state) => state.timeScale);
 
     const start = useBotsStore((state) => state.start);
     const stop = useBotsStore((state) => state.stop);
-    const nextStep = useBotsStore((state) => state.nextStep);
-    const setTimeScaleWhileRunning = useBotsStore(
-        (state) => state.setTimeScaleWhileRunning
-    );
 
     useEffect(() => {
         // start();

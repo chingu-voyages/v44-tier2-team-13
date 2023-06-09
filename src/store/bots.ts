@@ -1,87 +1,8 @@
 import { create } from "zustand";
-import { Bot, Operation, Vector } from "../lib/types";
+import { Bot, Operation } from "../lib/types";
 
 const randomChoice = (arr: any[]) => {
     return arr[Math.floor(Math.random() * arr.length)];
-};
-
-const randomVector = (
-    minX: number,
-    minY: number,
-    maxX: number,
-    maxY: number
-): Vector => {
-    return {
-        x: minX + Math.floor(Math.random() * (minX + maxX)),
-        y: minY + Math.floor(Math.random() * (minY + maxY)),
-    };
-};
-
-const generateUniqueNames = (n: number): string[] => {
-    const charPool = "abcdefghijklmnopqrstuvwxyz"; // max combinations is 325
-    const availableNames: string[] = [];
-    let count = 0;
-    for (let i = 0; i < charPool.length; i++) {
-        for (let j = i + 1; j < charPool.length; j++) {
-            count++;
-            const name = charPool.slice(i, j);
-            // console.log(name);
-            availableNames.push(name);
-            if (count > n) {
-                return availableNames;
-            }
-        }
-    }
-    return availableNames;
-};
-
-const generateBots = (n: number): Map<string, Bot> => {
-    const bots = new Map();
-    // Generating unique names
-    let availableNames = generateUniqueNames(n);
-
-    if (n > availableNames.length) {
-        throw new Error(
-            `Number of generated names is ${availableNames.length} in the generateBots method. Cannot exceed that limit`
-        );
-    }
-    for (let i = 0; i < n; i++) {
-        // generating names
-        const uniqueName = availableNames[i];
-        // availableNames = availableNames.filter((name) => name !== uniqueName); // Just removing the name from the arr
-
-        // generating direction
-        const x = randomChoice([-1, 0, 1]);
-        const y = x === 0 ? randomChoice([-1, 1]) : 0;
-        const bot: Bot = {
-            name: uniqueName,
-            boolValue: randomChoice([0, 1]),
-            dead: false,
-            direction: {
-                x: x,
-                y: y,
-            },
-            pos: randomVector(0, 0, 8, 8),
-            speed: 1 + Math.floor(Math.random() * 8),
-            color: randomChoice([
-                "red",
-                "green",
-                "white",
-                "blue",
-                "lightblue",
-                "purple",
-                "black",
-                "pink",
-            ]),
-        };
-        if (uniqueName in bots) {
-            throw new Error(`${uniqueName} name already exists`);
-        }
-
-        bots.set(uniqueName, bot);
-        // console.log(uniqueName, i);
-    }
-    return bots;
 };
 
 const randomOneOrMinusOne = () => {
