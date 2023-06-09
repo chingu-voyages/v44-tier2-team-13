@@ -168,11 +168,11 @@ function Form() {
                                 }
                                 className="slider cursor-pointer"
                             ></input>
-                            <div className="flex justify-between">
-                                <p className="font-Inter text-[10px]">
+                            <div className="mt-[8px] flex justify-between">
+                                <p className="font-Inter text-[14px]">
                                     (0.5 sec)
                                 </p>
-                                <p className="font-Inter text-[10px]">
+                                <p className="font-Inter text-[14px]">
                                     (5 sec)
                                 </p>
                             </div>
@@ -182,7 +182,7 @@ function Form() {
                 <button
                     onClick={createNewBot}
                     type="button"
-                    className="font-Inter w-32 h-8 bg-[#D4ADFC] rounded-lg text-xl font-bold"
+                    className="font-Inter w-32 h-8 bg-[#D4ADFC] rounded-md text-xl font-bold"
                 >
                     Submit
                 </button>
