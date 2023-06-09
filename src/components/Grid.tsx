@@ -54,59 +54,11 @@ const Grid: FC<GridProps> = ({ cellSize }) => {
                 {/* <span className="text-white">{bots.length}</span> */}
                 <div className="flex items-center justify-center gap-5">
                     <button
-                        className="px-5 py-2 bg-white rounded-md"
+                        className="mt-10 w-48 h-12 text-2xl font-Inter font-bold px-5 py-2 bg-[#F983AD] rounded-md"
                         onClick={running ? stop : start}
                     >
-                        {running ? "PAUSE" : "BATTLE"}
+                        {running ? "PAUSE" : "BATTLE!"}
                     </button>
-                    <button
-                        className="px-5 py-2 bg-white rounded-md"
-                        onClick={nextStep}
-                        disabled={running}
-                    >
-                        Next Step
-                    </button>
-                </div>
-                <div className="flex items-center justify-between text-white">
-                    <span className="">
-                        Num of Bots alive:{" "}
-                        {[...bots].filter(([_, bot]) => !bot.dead).length}
-                    </span>
-                    <span>
-                        Num of 1 bots:{" "}
-                        {
-                            [...bots].filter(
-                                ([_, bot]) => bot.boolValue === 1 && !bot.dead
-                            ).length
-                        }
-                    </span>
-                    <span>
-                        Num of 0 bots:{" "}
-                        {
-                            [...bots].filter(
-                                ([_, bot]) => bot.boolValue === 0 && !bot.dead
-                            ).length
-                        }
-                    </span>
-                </div>
-                <div className="text-white flex items-center justify-center gap-2">
-                    <label htmlFor="timescale">Time Scale</label>
-                    <input
-                        type="range"
-                        name="timescale"
-                        id="timescale"
-                        min={0.1}
-                        max={2}
-                        step={0.1}
-                        defaultValue={timeScale}
-                        onChange={(e) => {
-                            setTimeScaleWhileRunning(
-                                parseFloat(e.currentTarget.value)
-                            );
-                        }}
-                        // disabled={running}
-                    />
-                    {timeScale.toFixed(1)}
                 </div>
             </div>
         </>
