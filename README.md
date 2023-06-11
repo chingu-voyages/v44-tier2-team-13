@@ -1,14 +1,14 @@
-# voyage-tasks
+# Boole Bots
 
-Your project's `readme` is as important to success as your code. For 
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+Boole Bots is an interactive game that combines entertainment with basic Boolean logic concepts. This game provides a fun and engaging experience while helping players understand the fundamentals of Boolean logic operations.
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point - 
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
+## Overview
 
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
+The game takes place in an 8x8 arena filled with bots that move at random speeds and trajectories. Each bot is assigned a boolean value of 0 or 1 and a boolean operation (AND, OR, NOR, NOT). When two bots collide, their boolean values are combined using the assigned operation to determine the outcome. The winning bot remains in the arena while the losing bot disappears. The game continues until only one bot is left standing.
 
-> Own it & Make it your Own!
+## Key Features
+
+- **Boolean Logic:** Explore and apply basic Boolean logic principles, including AND, OR, NOR, and NOT operations.
+- **Entertaining Experience:** Enjoy an interactive and engaging game environment that makes learning Boolean logic enjoyable.
+- **Educational:** Whether you're a beginner or have prior knowledge of Boolean logic, Boole Bots provides an educational experience to strengthen your understanding.
+
