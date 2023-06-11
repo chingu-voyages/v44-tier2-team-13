@@ -4,7 +4,7 @@ Boole Bots is an interactive game that combines entertainment with basic Boolean
 
 ## Overview
 
-The game takes place in an 8x8 arena filled with bots that move at random speeds and trajectories. Each bot is assigned a boolean value of 0 or 1 and a boolean operation (AND, OR, NOR, NOT). When two bots collide, their boolean values are combined using the assigned operation to determine the outcome. The winning bot remains in the arena while the losing bot disappears. The game continues until only one bot is left standing.
+The game takes place in an 8x8 arena filled with bots that move at random speeds and trajectories. Each bot is assigned a boolean value of 0 or 1 and a boolean operation (AND, OR, NOR, XOR). When two bots collide, their boolean values are combined using the assigned operation to determine the outcome. The winning bot remains in the arena while the losing bot disappears. The game continues until only one bot is left standing.
 
 ## Key Features
 
