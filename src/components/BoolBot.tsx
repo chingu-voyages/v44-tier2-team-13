@@ -38,7 +38,7 @@ const BoolBot: FC<BoolBotProps> = ({ bot, cellSize }) => {
             }}
         >
             <div className="flex flex-col gap-0 items-center justify-center leading-none bg-white/50 rounded-full aspect-square px-5">
-                <span className="text-xs">{name.slice(0, 5)}..</span>
+                <span className="text-xs">{name.slice(0, 5)}</span>
                 <span className="text-sm">{boolValue}</span>
                 {/* <span className="text-sm">{operation}</span> */}
                 <span>{speed}</span>
